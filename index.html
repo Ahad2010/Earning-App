@@ -12,10 +12,64 @@
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/components.css" />
 <link rel="stylesheet" href="css/animations.css" />
+<link rel="stylesheet" href="css/auth.css" />
 </head>
 <body>
 
-  <div class="app-shell">
+  <!-- ===== Auth Gate (Login / Register) ===== -->
+  <div class="auth-screen" id="auth-screen" hidden>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7H21V13" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1 class="auth-title">InvestWise</h1>
+      <p class="auth-tagline">Investment plan tracker — demo mode</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" type="button">Log In</button>
+        <button class="auth-tab" data-tab="register" type="button">Sign Up</button>
+      </div>
+
+      <form class="auth-form" id="login-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="login-email" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="login-password" autocomplete="current-password" required />
+        </div>
+        <p class="auth-error" id="login-error" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit">Log In</button>
+      </form>
+
+      <form class="auth-form" id="register-form" hidden>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="register-name" autocomplete="name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="register-email" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="register-password" autocomplete="new-password" minlength="6" required />
+          <p class="form-hint">At least 6 characters.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Referral Code (optional)</label>
+          <input class="form-input" type="text" id="register-referral" placeholder="e.g. DEMO123" />
+        </div>
+        <p class="auth-error" id="register-error" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit">Create Account</button>
+      </form>
+
+      <p class="auth-demo-note">DEMO MODE — no real payments are processed. Deposits are reviewed manually from an uploaded screenshot before any balance is credited.</p>
+    </div>
+  </div>
+
+  <div class="app-shell" id="app-shell" hidden>
 
     <!-- ===== Sticky Top Header ===== -->
     <header class="app-header" id="app-header">
@@ -26,11 +80,14 @@
         <h1 class="header-title" id="header-title">Home</h1>
       </div>
       <div class="header-right">
-        <span class="demo-badge" title="This app uses static demo data only">DEMO MODE</span>
-        <button class="icon-btn" id="notif-btn" aria-label="Notifications">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span class="notif-dot"></span>
-        </button>
+        <span class="demo-badge" title="Deposits/withdrawals need admin approval — nothing here is a live payment gateway">DEMO MODE</span>
+        <div class="notif-wrap">
+          <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="notif-dot" id="notif-dot" hidden></span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown" hidden></div>
+        </div>
       </div>
     </header>
 
@@ -179,6 +236,7 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast"></div>
 
+  <script src="js/api.js"></script>
   <script src="js/data.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/counter.js"></script>

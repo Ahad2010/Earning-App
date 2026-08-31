@@ -787,6 +787,7 @@
 .tx-icon.deposit { background: var(--color-primary-light); color: var(--color-primary-dark); }
 .tx-icon.earning { background: var(--color-success-light); color: var(--color-success); }
 .tx-icon.withdraw { background: var(--color-danger-light); color: var(--color-danger); }
+.tx-icon.commission { background: var(--color-warning-light); color: var(--color-warning); }
 
 .tx-info {
   flex: 1;
@@ -823,7 +824,8 @@
 
 .tx-status.completed { background: var(--color-success-light); color: var(--color-success); }
 .tx-status.pending { background: var(--color-warning-light); color: var(--color-warning); }
-.tx-status.failed { background: var(--color-danger-light); color: var(--color-danger); }
+.tx-status.failed,
+.tx-status.rejected { background: var(--color-danger-light); color: var(--color-danger); }
 
 /* ---------- Modal ---------- */
 
@@ -908,6 +910,45 @@
   line-height: 1.7;
   color: var(--color-text-main);
   margin-bottom: 12px;
+}
+
+/* ---------- Billing / checkout ---------- */
+
+.billing-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--color-primary-dark);
+  margin-bottom: 4px;
+}
+
+.billing-summary strong {
+  font-size: 17px;
+}
+
+.billing-account {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.billing-account-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 3px 0;
+  color: var(--color-text-muted);
+}
+
+.billing-account-row strong {
+  color: var(--color-text-main);
+  font-weight: 600;
 }
 
 /* ---------- Forms ---------- */

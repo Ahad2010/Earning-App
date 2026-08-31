@@ -1,51 +1,21 @@
 /* =========================================================
-   data.js — Static / mock data for the demo app.
-   No backend, no real transactions. Everything here is a
-   placeholder so the UI has something realistic to render.
+   data.js — The only things that are still static/cosmetic
+   on the frontend: home banner slides and the vanity payouts
+   counter target. Everything financial (plans, user, team,
+   transactions, deposits, withdrawals) now comes from the
+   backend API — see js/api.js.
    ========================================================= */
 
-const investmentPlans = [
-  {
-    id: 1, name: "Starter Plan", deposit: 400, dailyReturn: 180, duration: 30,
-    icon: "🌱", accent: "#1E5FBF", accentLight: "#E8F0FE"
-  },
-  {
-    id: 2, name: "Silver Plan", deposit: 1000, dailyReturn: 400, duration: 30,
-    icon: "⚡", accent: "#5B6B82", accentLight: "#EEF1F6", popular: true
-  },
-  {
-    id: 3, name: "Gold Plan", deposit: 5000, dailyReturn: 1800, duration: 45,
-    icon: "👑", accent: "#C98A0A", accentLight: "#FCF3DF"
-  },
-  {
-    id: 4, name: "Platinum Plan", deposit: 10000, dailyReturn: 3800, duration: 60,
-    icon: "💎", accent: "#0F3E82", accentLight: "#E8F0FE"
-  }
-];
-
-const user = {
-  name: "Demo User",
-  email: "demo@example.com",
-  balance: 2500,
-  referralCode: "DEMO123",
-  joinDate: "2026-01-15",
-  avatar: "https://i.pravatar.cc/160?img=8"
-};
-
-const teamMembers = [
-  { name: "Ali Raza", joinDate: "2026-02-01", invested: 400, commission: 40, avatar: "https://i.pravatar.cc/120?img=12" },
-  { name: "Sara Khan", joinDate: "2026-02-10", invested: 1000, commission: 100, avatar: "https://i.pravatar.cc/120?img=47" },
-  { name: "Bilal Ahmed", joinDate: "2026-03-05", invested: 5000, commission: 500, avatar: "https://i.pravatar.cc/120?img=33" },
-  { name: "Hina Sheikh", joinDate: "2026-04-18", invested: 400, commission: 40, avatar: "https://i.pravatar.cc/120?img=25" }
-];
-
-const transactions = [
-  { type: "Deposit", amount: 400, date: "2026-08-01", status: "Completed" },
-  { type: "Earning", amount: 180, date: "2026-08-02", status: "Completed" },
-  { type: "Earning", amount: 180, date: "2026-08-03", status: "Completed" },
-  { type: "Withdraw", amount: 200, date: "2026-08-15", status: "Pending" },
-  { type: "Deposit", amount: 1000, date: "2026-08-20", status: "Completed" },
-  { type: "Earning", amount: 400, date: "2026-08-21", status: "Completed" }
+/* Dummy account details shown in the billing/checkout modal.
+   This is a manual "pay then upload proof" flow — the same
+   pattern many small Pakistani businesses use for JazzCash /
+   EasyPaisa payments — NOT a live payment gateway. Nothing here
+   moves real money by itself; a human admin must review the
+   screenshot and approve it before any balance changes. */
+const PAYMENT_ACCOUNTS = [
+  { method: "JazzCash", label: "JazzCash", accountName: "InvestWise Demo", accountNumber: "0300-1234567" },
+  { method: "EasyPaisa", label: "EasyPaisa", accountName: "InvestWise Demo", accountNumber: "0333-7654321" },
+  { method: "Bank Transfer", label: "Bank Transfer", accountName: "InvestWise Demo Pvt Ltd", accountNumber: "PK00 DEMO 0000 1234 5678" }
 ];
 
 /* Promo banner slides shown on the Home screen carousel.
@@ -83,8 +53,8 @@ const promoSlides = [
 
 /* Fixed reference point used by the Home screen's live
    Day / Hour / Min / Sec counters — elapsed time since the
-   user's (demo) join date. */
-const APP_START_DATE = new Date(user.joinDate + "T00:00:00");
+   platform's (demo) launch date. Purely decorative. */
+const APP_START_DATE = new Date("2026-01-01T00:00:00");
 
 /* Target number the live "Total Payouts Distributed" counter
    animates up to on load, then keeps ticking slowly to feel alive. */

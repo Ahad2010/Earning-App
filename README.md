@@ -1,82 +1,138 @@
 # InvestWise — Investment Plan Tracker (Demo)
 
-> **Disclaimer:** This is a UI/UX demo project. No real payment gateway, real
-> user funds, or real financial transactions are involved. All data (balance,
-> earnings, plans, referrals, transactions) is static/mock. Turning this into
-> a real product that accepts real user deposits would require proper legal
-> licensing (e.g. SECP registration in Pakistan) and a genuine revenue source.
+> **Disclaimer:** This started as a UI/UX demo and now has a real backend, real
+> accounts, and a real (manual) deposit/withdrawal approval workflow — but it
+> is still **not a licensed financial product**. Deposits are a "pay
+> manually, upload a screenshot, admin reviews it" flow, the same pattern many
+> small Pakistani businesses use for JazzCash/EasyPaisa payments when they
+> don't have a payment gateway. **There is no live payment gateway anywhere
+> in this app** — nothing here can move real money by itself. A human admin
+> must open the dashboard and click Approve before any balance changes.
+>
+> **Before this ever takes real money from real members of the public:** the
+> investment-plan return figures seeded in `server/db.js` (e.g. Rs. 400 in →
+> Rs. 180/day back, ~45% *daily*) are demo placeholders. That shape — fixed,
+> above-market daily returns paid out from a pool of user deposits, plus a
+> referral commission — is the same shape as an unsustainable/Ponzi scheme if
+> it's ever run for real without a genuine revenue source behind the returns.
+> Running this as a real product that accepts deposits from the public
+> requires proper legal/regulatory review and licensing (e.g. SECP
+> registration in Pakistan) first. Don't onboard real paying users on the
+> current numbers.
 
 ## What this is
 
-A mobile-first, single-page demo of an investment plan tracker: browse
-investment plans, "invest" (dummy) into them, watch simulated earnings and
-progress, view a referral/team screen, and a profile screen with a dummy
-withdraw/deposit flow and transaction history.
+A mobile-first investment plan tracker with a real backend:
+- Users register/log in, browse investment plans, and "buy" one through a
+  billing/checkout flow — pay manually to a shown demo account, upload a
+  screenshot, and wait for admin review.
+- An admin dashboard lists pending deposits/withdrawals with the uploaded
+  screenshot, and approves or rejects them.
+- Approving a plan deposit activates it and starts accruing the daily
+  return into the user's withdrawable balance; approving a wallet top-up
+  credits the balance directly.
+- Withdrawals hold the requested amount immediately and either finalize or
+  refund it depending on the admin's decision.
+- Referral commission (10%) is credited automatically when a referred
+  user's deposit is approved.
 
 ## Tech Stack
 
-- HTML5 (semantic structure)
-- CSS3 (Flexbox, CSS variables, transitions/animations)
-- Vanilla JavaScript (no frameworks, no build tools, no backend)
-
-Everything runs directly in the browser — no `npm install`, no build step.
+- **Frontend:** HTML5, CSS3, vanilla JavaScript (no framework, no build step)
+- **Backend:** Node.js + Express
+- **Database:** SQLite via Node's built-in `node:sqlite` (no native module to
+  compile, no separate DB server to install)
+- **Auth:** JWT, passwords hashed with bcrypt
+- **File uploads:** Multer (payment-proof screenshots)
 
 ## Running it
 
-Just open `index.html` in a browser. For clipboard "Copy" to work in every
-browser (some restrict `navigator.clipboard` to secure contexts), it's best
-served over `http://localhost` rather than a raw `file://` URL — the app
-includes a fallback for `file://` regardless. To serve locally:
-
 ```bash
-# any static file server works, e.g.:
-python3 -m http.server 8000
-# then open http://localhost:8000
+cd server
+npm install
+npm start
 ```
+
+The server prints a default admin login on first run (also shown below) and
+serves everything on one port:
+
+- App: http://localhost:4000
+- Admin dashboard: http://localhost:4000/admin.html
+
+Default admin login (created automatically the first time the server runs,
+when the database file doesn't exist yet):
+
+```
+email:    admin@investwise.demo
+password: Admin@123
+```
+
+**Change this password** (or set `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars
+before the first run) before using this anywhere but your own machine. Also
+set a real `JWT_SECRET` env var — see `server/middleware/auth.js`.
+
+The SQLite database file (`server/data.sqlite`) and uploaded screenshots
+(`server/uploads/screenshots/`) are created automatically and are
+gitignored — delete `server/data.sqlite` to reset all data.
 
 ## Project Structure
 
 ```
 investment-app-demo/
 │
-├── index.html              # Main single-page app shell
+├── index.html                # User-facing app shell (auth gate + app)
+├── admin.html                # Admin dashboard
 ├── css/
-│   ├── style.css            # Global styles, variables, theme, layout
-│   ├── components.css       # Cards, buttons, nav bar, modals, forms
-│   └── animations.css       # Counter animation, transitions, keyframes
+│   ├── style.css              # Global styles, variables, theme, layout
+│   ├── components.css         # Cards, buttons, nav bar, modals, forms
+│   ├── animations.css         # Transitions, keyframes
+│   ├── auth.css               # Login/register (and admin login) screen
+│   └── admin.css               # Admin dashboard layout
 ├── js/
-│   ├── data.js               # Dummy data (plans, user, team, transactions)
-│   ├── navigation.js         # Tab switching logic
-│   ├── counter.js            # Live counter + running timer animation logic
-│   ├── render.js              # Functions to render each screen's content
-│   └── app.js                 # App init / entry point, state, modals, events
-├── assets/
-│   ├── icons/                 # Reserved for custom icons (nav icons are
-│   │                             inline SVG in index.html for portability)
-│   └── images/                 # Reserved for custom banner/avatar images
-│                                 (banner slides currently use CSS gradients)
+│   ├── api.js                  # Fetch wrapper + JWT handling (user)
+│   ├── data.js                  # Cosmetic-only data (banner slides, demo payment accounts)
+│   ├── navigation.js             # Tab switching + sliding nav indicator
+│   ├── counter.js                 # Live counter + running timer animation
+│   ├── render.js                   # Renders each screen from API data
+│   ├── app.js                       # App init, auth gate, billing/withdraw flows, notifications
+│   └── admin.js                      # Admin dashboard logic (its own token/session)
+├── assets/                    # Reserved for custom icons/images (nav icons are inline SVG)
+├── server/
+│   ├── server.js               # Express entry point — serves frontend + /api + /uploads
+│   ├── db.js                    # SQLite schema + first-run seed (plans, default admin)
+│   ├── middleware/auth.js        # JWT verification (user + admin)
+│   ├── lib/
+│   │   ├── earnings.js            # Credits accrued daily-return earnings into balance
+│   │   ├── upload.js               # Multer config for screenshot uploads
+│   │   └── util.js                  # Referral code generation, response serialization
+│   ├── routes/
+│   │   ├── auth.js                  # Register / login
+│   │   ├── plans.js                  # Public plan list
+│   │   ├── user.js                    # Profile, earnings, team, transactions, deposits, withdrawals
+│   │   └── admin.js                    # Admin login + approve/reject workflow, users, stats
+│   └── uploads/screenshots/            # Uploaded payment-proof images (gitignored)
 └── README.md
 ```
 
-## Screens
+## How the money flow actually works (so it's clear nothing is automatic)
 
-- **Home** — promo banner carousel, live "Total Payouts" counter with a
-  running Day/Hour/Min/Sec timer, and a dynamically rendered list of
-  investment plans with an "Invest Now" action.
-- **Earning** — summary of total invested / total earned, and a list of
-  active plans with progress bars, computed from when each plan was
-  "invested" in.
-- **Team** — referral code + shareable link with copy-to-clipboard, team
-  stats, and a list of referred users with their commission.
-- **Profile** — user info, balance card with dummy Withdraw/Deposit modals,
-  and a menu for Transaction History, About Us, Settings (toggles) and
-  Logout.
+1. **Buy a plan / top up wallet:** user picks a plan (or the Profile
+   "Deposit" button for a plain top-up), sees a demo account to pay to, pays
+   *manually* outside the app, and uploads a screenshot. This creates a
+   `pending` deposit request — no balance changes yet.
+2. **Admin reviews it** on `/admin.html`, looking at the screenshot, and
+   clicks Approve or Reject.
+   - Approve + plan purchase → the plan becomes an active investment and
+     starts accruing its daily return (server-computed, credited into the
+     balance a little at a time whenever the user's data is fetched).
+   - Approve + wallet top-up → the amount is added to the balance directly.
+   - Reject → nothing changes; the request is marked rejected.
+3. **Withdraw:** user requests a withdrawal; the amount is held (deducted)
+   from their balance immediately so it can't be double-spent while pending.
+   Admin approves (finalizes it) or rejects (refunds the held amount back).
+4. **Referral commission:** when a referred user's deposit is approved, the
+   referrer is credited 10% of that deposit automatically.
 
-## Notes on data & persistence
-
-- All base data (plans, user, team, transactions) lives in `js/data.js` as
-  static/mock JS objects — no API calls.
-- "Invest Now" and Settings toggles persist to `localStorage` only, so the
-  demo state survives a page refresh but never touches a server.
-- A "DEMO MODE" badge is shown in the header at all times for transparency,
-  per the project's non-functional requirements.
+All of this is visible in Transaction History and the bell-icon
+notifications, both of which reflect real request status (`Pending` /
+`Completed` / `Rejected`) rather than static text.

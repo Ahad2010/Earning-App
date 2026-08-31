@@ -82,11 +82,11 @@ function renderPromoBanner() {
 
 /* ---------------- Home: Investment Plans ---------------- */
 
-function renderInvestmentPlans() {
+function renderInvestmentPlans(plans) {
   const list = document.getElementById("plans-list");
   if (!list) return;
 
-  list.innerHTML = investmentPlans
+  list.innerHTML = plans
     .map(
       (plan) => `
       <div class="plan-card${plan.popular ? " popular" : ""}" style="--plan-accent:${plan.accent};--plan-accent-light:${plan.accentLight}">
@@ -118,25 +118,14 @@ function renderInvestmentPlans() {
 
 /* ---------------- Earning Screen ---------------- */
 
-function computeActivePlanProgress(activePlan) {
-  const plan = investmentPlans.find((p) => p.id === activePlan.planId);
-  if (!plan) return null;
-
-  const elapsedMs = Date.now() - activePlan.investedAt;
-  const daysCompleted = Math.min(Math.max(Math.floor(elapsedMs / MS_PER_DAY), 0), plan.duration);
-  const earned = daysCompleted * plan.dailyReturn;
-  const progressPct = Math.round((daysCompleted / plan.duration) * 100);
-  const isCompleted = daysCompleted >= plan.duration;
-
-  return { plan, daysCompleted, earned, progressPct, isCompleted };
-}
-
-function renderEarningScreen(activePlans) {
+function renderEarningScreen(data) {
   const listEl = document.getElementById("active-plans-list");
   const investedEl = document.getElementById("summary-invested");
   const earnedEl = document.getElementById("summary-earned");
   const badgeEl = document.getElementById("earning-badge");
   if (!listEl || !investedEl || !earnedEl) return;
+
+  const activePlans = (data && data.activePlans) || [];
 
   if (!activePlans.length) {
     listEl.innerHTML = `
@@ -154,48 +143,39 @@ function renderEarningScreen(activePlans) {
     return;
   }
 
-  let totalInvested = 0;
-  let totalEarned = 0;
-
   listEl.innerHTML = activePlans
-    .map((activePlan) => {
-      const result = computeActivePlanProgress(activePlan);
-      if (!result) return "";
-      const { plan, daysCompleted, earned, progressPct, isCompleted } = result;
-
-      totalInvested += plan.deposit;
-      totalEarned += earned;
-
+    .map((ap) => {
+      const isCompleted = ap.status === "Completed";
       return `
-        <div class="active-plan-card">
+        <div class="active-plan-card" style="--plan-accent:${ap.accent};--plan-accent-light:${ap.accentLight}">
           <div class="active-plan-top">
             <div>
-              <div class="active-plan-name">${plan.name}</div>
-              <div class="active-plan-invested">Invested: ${formatCurrency(plan.deposit)}</div>
+              <div class="active-plan-name">${ap.icon ? ap.icon + " " : ""}${ap.name}</div>
+              <div class="active-plan-invested">Invested: ${formatCurrency(ap.deposit)}</div>
             </div>
             <span class="status-badge ${isCompleted ? "status-completed" : "status-active"}">
-              ${isCompleted ? "Completed" : "Active"}
+              ${ap.status}
             </span>
           </div>
           <div class="progress-row">
             <div class="progress-labels">
-              <span>${daysCompleted} / ${plan.duration} days</span>
-              <span>${progressPct}%</span>
+              <span>${ap.daysCompleted} / ${ap.duration} days</span>
+              <span>${ap.progressPct}%</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" style="width:${progressPct}%"></div>
+              <div class="progress-fill" style="width:${ap.progressPct}%"></div>
             </div>
           </div>
           <div class="active-plan-earned">
             <span class="earned-label">Earned so far</span>
-            <span class="earned-value">${formatCurrency(earned)}</span>
+            <span class="earned-value">${formatCurrency(ap.earned)}</span>
           </div>
         </div>`;
     })
     .join("");
 
-  investedEl.textContent = formatCurrency(totalInvested);
-  earnedEl.textContent = formatCurrency(totalEarned);
+  investedEl.textContent = formatCurrency(data.totalInvested);
+  earnedEl.textContent = formatCurrency(data.totalEarned);
 
   if (badgeEl) {
     badgeEl.hidden = activePlans.length === 0;
@@ -205,29 +185,36 @@ function renderEarningScreen(activePlans) {
 
 /* ---------------- Team Screen ---------------- */
 
-function renderTeamScreen() {
+function renderTeamScreen(data) {
   const statsRow = document.getElementById("team-stats-row");
   const listEl = document.getElementById("team-list");
   const codeEl = document.getElementById("referral-code");
   const linkEl = document.getElementById("referral-link");
   if (!statsRow || !listEl) return;
 
-  codeEl.textContent = user.referralCode;
-  linkEl.textContent = `https://investwise.demo/ref/${user.referralCode}`;
-
-  const totalEarning = teamMembers.reduce((sum, m) => sum + m.commission, 0);
+  codeEl.textContent = data.referralCode;
+  linkEl.textContent = data.referralLink;
 
   statsRow.innerHTML = `
     <div class="team-stat-card">
-      <div class="team-stat-value">${teamMembers.length}</div>
+      <div class="team-stat-value">${data.stats.totalReferrals}</div>
       <div class="team-stat-label">Total Referrals</div>
     </div>
     <div class="team-stat-card">
-      <div class="team-stat-value">${formatCurrency(totalEarning)}</div>
+      <div class="team-stat-value">${formatCurrency(data.stats.totalTeamEarning)}</div>
       <div class="team-stat-label">Team Earning</div>
     </div>`;
 
-  listEl.innerHTML = teamMembers
+  if (!data.members.length) {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <p>No referrals yet — share your code to start earning commission</p>
+      </div>`;
+    return;
+  }
+
+  listEl.innerHTML = data.members
     .map(
       (m) => `
       <div class="team-row">
@@ -247,7 +234,7 @@ function renderTeamScreen() {
 
 /* ---------------- Profile Screen ---------------- */
 
-function renderProfileScreen(currentBalance) {
+function renderProfileScreen(user) {
   const headerEl = document.getElementById("profile-header");
   const balanceEl = document.getElementById("balance-value");
   if (!headerEl || !balanceEl) return;
@@ -260,17 +247,24 @@ function renderProfileScreen(currentBalance) {
     </div>
     <button class="profile-edit-btn" id="profile-edit-btn" title="Edit profile (demo only)">✎</button>`;
 
-  balanceEl.textContent = formatCurrency(currentBalance);
+  balanceEl.textContent = formatCurrency(user.balance);
 }
 
 /* ---------------- Transaction History (modal content) ---------------- */
 
-const TX_ICONS = { Deposit: "⬇️", Earning: "💰", Withdraw: "⬆️" };
+const TX_ICONS = { Deposit: "⬇️", Earning: "💰", Withdraw: "⬆️", Commission: "🤝" };
 
-function renderTransactionHistoryHtml() {
+function renderTransactionHistoryHtml(transactions) {
+  if (!transactions.length) {
+    return `
+      <h3 class="modal-title">Transaction History</h3>
+      <div class="empty-state">
+        <div class="empty-state-icon">🧾</div>
+        <p>No transactions yet.</p>
+      </div>`;
+  }
+
   const rows = transactions
-    .slice()
-    .reverse()
     .map((tx) => {
       const typeClass = tx.type.toLowerCase();
       const statusClass = tx.status.toLowerCase();
@@ -292,7 +286,7 @@ function renderTransactionHistoryHtml() {
 
   return `
     <h3 class="modal-title">Transaction History</h3>
-    <p class="modal-subtitle">Demo records — no real transactions were made.</p>
+    <p class="modal-subtitle">Deposits are pending until an admin reviews your screenshot.</p>
     <div class="modal-body">${rows}</div>`;
 }
 
@@ -302,9 +296,9 @@ function renderAboutUsHtml() {
   return `
     <h3 class="modal-title">About Us</h3>
     <div class="modal-body">
-      <p>InvestWise is a UI/UX demo project built to showcase an investment plan tracker interface. It is not a real financial product — all balances, plans, referrals and transactions shown are static, mock data.</p>
-      <p>No real payment gateway, real user funds, or real financial transactions are involved anywhere in this app. If this concept were ever developed into a real product handling user funds, it would require proper legal licensing (e.g. SECP registration in Pakistan) and a genuine, verifiable revenue source before launch.</p>
-      <p>This project exists purely to demonstrate front-end structure, responsive layout, and interactive UI patterns using plain HTML, CSS and JavaScript.</p>
+      <p>InvestWise is a UI/UX demo project built to showcase an investment plan tracker app end-to-end, including a manual deposit/withdrawal review workflow. It is not a licensed financial product.</p>
+      <p>Deposits are a "pay manually, then upload proof" flow — like JazzCash/EasyPaisa transfers many small Pakistani businesses use — reviewed by a human admin before any balance changes. There is no live payment gateway connected anywhere in this app.</p>
+      <p>Turning this into a real product that accepts funds from the public would require proper legal/regulatory licensing (e.g. SECP registration in Pakistan) and a genuine, sustainable revenue source — the daily-return figures here are demo placeholders, not a real financial offer.</p>
     </div>`;
 }
 

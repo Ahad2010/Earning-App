@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InvestWise Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0F3E82" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/animations.css" />
+<link rel="stylesheet" href="css/auth.css" />
+<link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- ===== Admin Login ===== -->
+  <div class="auth-screen" id="admin-auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1 class="auth-title">Admin Panel</h1>
+      <p class="auth-tagline">InvestWise — review deposits &amp; withdrawals</p>
+
+      <form class="auth-form" id="admin-login-form" style="margin-top:22px;">
+        <div class="form-group">
+          <label class="form-label">Admin Email</label>
+          <input class="form-input" type="email" id="admin-email" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="admin-password" autocomplete="current-password" required />
+        </div>
+        <p class="auth-error" id="admin-login-error" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit">Log In</button>
+      </form>
+
+      <p class="auth-demo-note">Default demo login is printed in the server console on first run. Change it before using this anywhere but locally.</p>
+    </div>
+  </div>
+
+  <!-- ===== Admin Dashboard ===== -->
+  <div class="admin-shell" id="admin-shell" hidden>
+
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <span class="header-logo" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7H21V13" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <div class="admin-header-title">InvestWise Admin</div>
+          <div class="admin-header-sub">Deposit &amp; withdrawal review</div>
+        </div>
+      </div>
+      <button class="btn btn-small btn-light" id="admin-logout-btn">Log Out</button>
+    </header>
+
+    <main class="admin-content">
+
+      <div class="admin-stats-row" id="admin-stats-row"><!-- rendered by admin.js --></div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="deposits">Deposits</button>
+        <button class="admin-tab" data-tab="withdrawals">Withdrawals</button>
+        <button class="admin-tab" data-tab="users">Users</button>
+      </div>
+
+      <!-- Deposits -->
+      <section class="admin-panel active" id="panel-deposits">
+        <div class="admin-panel-toolbar">
+          <select class="form-select admin-filter" id="deposits-filter">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="admin-list" id="deposits-list"><!-- rendered by admin.js --></div>
+      </section>
+
+      <!-- Withdrawals -->
+      <section class="admin-panel" id="panel-withdrawals">
+        <div class="admin-panel-toolbar">
+          <select class="form-select admin-filter" id="withdrawals-filter">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="admin-list" id="withdrawals-list"><!-- rendered by admin.js --></div>
+      </section>
+
+      <!-- Users -->
+      <section class="admin-panel" id="panel-users">
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Balance</th><th>Total Invested</th><th>Referral Code</th><th>Joined</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"><!-- rendered by admin.js --></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== Screenshot lightbox ===== -->
+  <div class="admin-lightbox" id="admin-lightbox">
+    <img id="admin-lightbox-img" src="" alt="Payment screenshot" />
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/render.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

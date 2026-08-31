@@ -1,0 +1,6 @@
+node_modules/
+server/data.sqlite
+server/uploads/screenshots/*
+!server/uploads/screenshots/.gitkeep
+.DS_Store
+*.log
