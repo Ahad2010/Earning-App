@@ -1,0 +1,112 @@
+/* =========================================================
+   Counter animation, transitions, keyframes
+   ========================================================= */
+
+/* ---------- Screen (tab) transition ---------- */
+
+.screen.active {
+  animation: screenFadeIn 0.28s ease;
+}
+
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Counter pulse on update ---------- */
+
+.counter-value.pulse {
+  animation: counterPulse 0.35s ease;
+}
+
+@keyframes counterPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Card entrance ---------- */
+
+.plan-card, .active-plan-card, .team-row {
+  animation: cardRise 0.35s ease both;
+}
+
+@keyframes cardRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Card hover (desktop) ---------- */
+
+@media (hover: hover) {
+  .plan-card, .active-plan-card, .team-stat-card, .menu-item {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .plan-card:hover, .active-plan-card:hover, .team-stat-card:hover {
+    box-shadow: 0 6px 20px rgba(30, 95, 191, 0.14);
+    transform: translateY(-2px);
+  }
+  .menu-item:hover {
+    background: var(--color-surface);
+  }
+}
+
+/* ---------- Toast ---------- */
+
+@keyframes toastPop {
+  0%   { opacity: 0; transform: translate(-50%, 12px); }
+  10%  { opacity: 1; transform: translate(-50%, 0); }
+  85%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 8px); }
+}
+
+/* ---------- Copied tooltip ---------- */
+
+@keyframes tooltipPop {
+  0%   { opacity: 0; transform: translateY(4px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+/* ---------- Nav icon tap ---------- */
+
+.nav-btn svg {
+  transition: transform 0.18s ease;
+}
+
+.nav-btn.active svg {
+  transform: translateY(-1px) scale(1.05);
+}
+
+/* ---------- Progress bar fill ---------- */
+
+.progress-fill {
+  transition: width 0.9s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+/* ---------- Modal ---------- */
+
+.modal-overlay {
+  transition: opacity 0.25s ease;
+}
+
+.modal-box {
+  transition: transform 0.3s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+/* ---------- Button press ---------- */
+
+.btn, .menu-item, .nav-btn, .toggle {
+  transition: transform 0.15s ease;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

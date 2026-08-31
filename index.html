@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+<title>InvestWise — Investment Plan Tracker (Demo)</title>
+<meta name="description" content="UI/UX demo of an investment plan tracker app. All data is static/mock — no real payments or funds involved." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ===== Sticky Top Header ===== -->
+    <header class="app-header" id="app-header">
+      <div class="header-left">
+        <span class="header-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7H21V13" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <h1 class="header-title" id="header-title">Home</h1>
+      </div>
+      <div class="header-right">
+        <span class="demo-badge" title="This app uses static demo data only">DEMO MODE</span>
+        <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== Scrollable Content ===== -->
+    <main class="app-content" id="app-content">
+
+      <!-- ---------- HOME SCREEN ---------- -->
+      <section class="screen active" id="screen-home" data-title="Home">
+
+        <div class="banner-carousel" id="banner-carousel">
+          <div class="banner-track" id="banner-track"></div>
+          <div class="banner-dots" id="banner-dots"></div>
+        </div>
+
+        <div class="counter-card">
+          <p class="counter-label">Total Payouts Distributed (Platform-wide)</p>
+          <p class="counter-value" id="counter-value">0</p>
+          <div class="counter-sub-row">
+            <div class="counter-sub"><span class="sub-num" id="stat-day">0</span><span class="sub-label">Day</span></div>
+            <div class="counter-sub"><span class="sub-num" id="stat-hour">00</span><span class="sub-label">Hour</span></div>
+            <div class="counter-sub"><span class="sub-num" id="stat-min">00</span><span class="sub-label">Min</span></div>
+            <div class="counter-sub"><span class="sub-num" id="stat-sec">00</span><span class="sub-label">Sec</span></div>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <h2>Investment Plans</h2>
+          <span class="section-note">Demo figures</span>
+        </div>
+        <div class="plans-list" id="plans-list"><!-- rendered by render.js --></div>
+
+      </section>
+
+      <!-- ---------- EARNING SCREEN ---------- -->
+      <section class="screen" id="screen-earning" data-title="Earning">
+
+        <div class="summary-card">
+          <div class="summary-item">
+            <p class="summary-label">Total Invested</p>
+            <p class="summary-value" id="summary-invested">Rs. 0</p>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-item">
+            <p class="summary-label">Total Earned</p>
+            <p class="summary-value success" id="summary-earned">Rs. 0</p>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <h2>Active Plans</h2>
+        </div>
+        <div class="active-plans-list" id="active-plans-list"><!-- rendered by render.js --></div>
+
+      </section>
+
+      <!-- ---------- TEAM SCREEN ---------- -->
+      <section class="screen" id="screen-team" data-title="Team">
+
+        <div class="referral-card">
+          <p class="referral-label">Your Referral Code</p>
+          <div class="referral-row">
+            <span class="referral-code" id="referral-code">DEMO123</span>
+            <button class="btn btn-small btn-light" id="copy-code-btn">Copy</button>
+          </div>
+          <div class="referral-link-row">
+            <span class="referral-link" id="referral-link">https://investwise.demo/ref/DEMO123</span>
+            <button class="btn btn-small btn-light" id="copy-link-btn">Copy Link</button>
+          </div>
+          <span class="copied-tooltip" id="copied-tooltip">Copied!</span>
+        </div>
+
+        <div class="team-stats-row" id="team-stats-row"><!-- rendered by render.js --></div>
+
+        <div class="section-head">
+          <h2>Referred Users</h2>
+        </div>
+        <div class="team-list" id="team-list"><!-- rendered by render.js --></div>
+
+      </section>
+
+      <!-- ---------- PROFILE SCREEN ---------- -->
+      <section class="screen" id="screen-profile" data-title="Profile">
+
+        <div class="profile-header" id="profile-header"><!-- rendered by render.js --></div>
+
+        <div class="balance-card">
+          <p class="balance-label">Current Balance</p>
+          <p class="balance-value" id="balance-value">Rs. 0</p>
+          <div class="balance-actions">
+            <button class="btn btn-primary" id="withdraw-btn">Withdraw</button>
+            <button class="btn btn-outline" id="deposit-btn">Deposit</button>
+          </div>
+        </div>
+
+        <div class="menu-list">
+          <button class="menu-item" id="menu-transactions">
+            <span class="menu-icon">🧾</span><span class="menu-text">Transaction History</span><span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-item" id="menu-about">
+            <span class="menu-icon">ℹ️</span><span class="menu-text">About Us</span><span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-item" id="menu-settings">
+            <span class="menu-icon">⚙️</span><span class="menu-text">Settings</span><span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-item menu-danger" id="menu-logout">
+            <span class="menu-icon">🚪</span><span class="menu-text">Logout</span><span class="menu-arrow">›</span>
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ===== Fixed Bottom Navigation ===== -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-btn active" data-screen="screen-home">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 11.5L12 4l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 10v9h13v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-screen="screen-earning">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19v-7M20 19V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Earning</span>
+        <span class="nav-badge" id="earning-badge" hidden>0</span>
+      </button>
+      <button class="nav-btn" data-screen="screen-team">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 19c0-3 3-5 6.5-5s6.5 2 6.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="17" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 14.2c2.6.3 4.5 2 4.5 4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Team</span>
+      </button>
+      <button class="nav-btn" data-screen="screen-profile">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.6" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===== Generic Modal Overlay ===== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box" id="modal-box" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-content" id="modal-content"><!-- injected by app.js --></div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/counter.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
