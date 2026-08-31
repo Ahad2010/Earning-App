@@ -26,6 +26,19 @@ function initials(name) {
     .toUpperCase();
 }
 
+/** Renders a circular avatar that shows initials immediately and
+ *  upgrades to a real photo once it loads; if the photo fails to
+ *  load, the <img> removes itself and the initials stay visible —
+ *  there is never a broken-image icon. */
+function avatarHtml(name, avatarUrl, extraClass = "") {
+  return `
+    <div class="avatar ${extraClass}">
+      <span class="avatar-fallback">${initials(name)}</span>
+      ${avatarUrl ? `<img class="avatar-img" src="${avatarUrl}" alt="" loading="lazy"
+          onload="this.classList.add('loaded')" onerror="this.remove()" />` : ""}
+    </div>`;
+}
+
 /* ---------------- Home: Banner Carousel ---------------- */
 
 function renderPromoBanner() {
@@ -35,10 +48,12 @@ function renderPromoBanner() {
 
   track.innerHTML = promoSlides
     .map(
-      (slide) => `
-      <div class="banner-slide" style="background:${slide.gradient}">
-        <h3>${slide.title}</h3>
-        <p>${slide.subtitle}</p>
+      (slide, i) => `
+      <div class="banner-slide" data-index="${i}" style="background:${slide.gradient}">
+        <div class="banner-slide-text">
+          <h3>${slide.title}</h3>
+          <p>${slide.subtitle}</p>
+        </div>
       </div>`
     )
     .join("");
@@ -46,6 +61,23 @@ function renderPromoBanner() {
   dots.innerHTML = promoSlides
     .map((_, i) => `<span class="banner-dot${i === 0 ? " active" : ""}" data-index="${i}"></span>`)
     .join("");
+
+  // Upgrade each slide to a real photo once it's loaded, layered
+  // under a dark scrim so the title/subtitle stay readable. The
+  // gradient background above stays visible until (or instead of)
+  // that photo, so a slow/blocked network never shows a blank slide.
+  promoSlides.forEach((slide, i) => {
+    if (!slide.image) return;
+    const img = new Image();
+    img.onload = () => {
+      const el = track.querySelector(`.banner-slide[data-index="${i}"]`);
+      if (el) {
+        el.style.backgroundImage =
+          `linear-gradient(180deg, rgba(10,26,58,0.15), rgba(8,18,42,0.72)), url('${slide.image}')`;
+      }
+    };
+    img.src = slide.image;
+  });
 }
 
 /* ---------------- Home: Investment Plans ---------------- */
@@ -57,9 +89,13 @@ function renderInvestmentPlans() {
   list.innerHTML = investmentPlans
     .map(
       (plan) => `
-      <div class="plan-card">
+      <div class="plan-card${plan.popular ? " popular" : ""}" style="--plan-accent:${plan.accent};--plan-accent-light:${plan.accentLight}">
+        ${plan.popular ? '<span class="plan-ribbon">POPULAR</span>' : ""}
         <div class="plan-card-top">
-          <span class="plan-name">${plan.name}</span>
+          <div class="plan-card-heading">
+            <span class="plan-icon-badge">${plan.icon}</span>
+            <span class="plan-name">${plan.name}</span>
+          </div>
           <span class="plan-duration-badge">${plan.duration} Days</span>
         </div>
         <div class="plan-stats">
@@ -195,7 +231,7 @@ function renderTeamScreen() {
     .map(
       (m) => `
       <div class="team-row">
-        <div class="avatar">${initials(m.name)}</div>
+        ${avatarHtml(m.name, m.avatar)}
         <div class="team-row-info">
           <div class="team-row-name">${m.name}</div>
           <div class="team-row-date">Joined ${formatDate(m.joinDate)}</div>
@@ -217,7 +253,7 @@ function renderProfileScreen(currentBalance) {
   if (!headerEl || !balanceEl) return;
 
   headerEl.innerHTML = `
-    <div class="profile-avatar">${initials(user.name)}</div>
+    ${avatarHtml(user.name, user.avatar, "profile-avatar")}
     <div class="profile-info">
       <div class="profile-name">${user.name}</div>
       <div class="profile-contact">${user.email}</div>

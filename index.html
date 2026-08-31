@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
 <title>InvestWise — Investment Plan Tracker (Demo)</title>
 <meta name="description" content="UI/UX demo of an investment plan tracker app. All data is static/mock — no real payments or funds involved." />
+<meta name="theme-color" content="#0F3E82" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -44,7 +45,7 @@
           <div class="banner-dots" id="banner-dots"></div>
         </div>
 
-        <div class="counter-card">
+        <div class="counter-card premium-card">
           <p class="counter-label">Total Payouts Distributed (Platform-wide)</p>
           <p class="counter-value" id="counter-value">0</p>
           <div class="counter-sub-row">
@@ -88,7 +89,7 @@
       <!-- ---------- TEAM SCREEN ---------- -->
       <section class="screen" id="screen-team" data-title="Team">
 
-        <div class="referral-card">
+        <div class="referral-card premium-card">
           <p class="referral-label">Your Referral Code</p>
           <div class="referral-row">
             <span class="referral-code" id="referral-code">DEMO123</span>
@@ -115,7 +116,7 @@
 
         <div class="profile-header" id="profile-header"><!-- rendered by render.js --></div>
 
-        <div class="balance-card">
+        <div class="balance-card premium-card">
           <p class="balance-label">Current Balance</p>
           <p class="balance-value" id="balance-value">Rs. 0</p>
           <div class="balance-actions">
@@ -145,6 +146,7 @@
 
     <!-- ===== Fixed Bottom Navigation ===== -->
     <nav class="bottom-nav" id="bottom-nav">
+      <span class="nav-indicator" id="nav-indicator"></span>
       <button class="nav-btn active" data-screen="screen-home">
         <svg viewBox="0 0 24 24" fill="none"><path d="M3 11.5L12 4l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 10v9h13v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Home</span>

@@ -69,16 +69,6 @@
   100% { opacity: 0; transform: translateY(-4px); }
 }
 
-/* ---------- Nav icon tap ---------- */
-
-.nav-btn svg {
-  transition: transform 0.18s ease;
-}
-
-.nav-btn.active svg {
-  transform: translateY(-1px) scale(1.05);
-}
-
 /* ---------- Progress bar fill ---------- */
 
 .progress-fill {
